@@ -17,9 +17,9 @@ ConnectionInfo.Default
     .WithHostName("<yourHost>")
     .WithUserName("<yourUser>")
     .WithPassword("<yourPassword>")
-    .CreateMQFactory()
-    .CreatePublisher<Message>()
-    .Next(new Message()
+    .CreateChannelFactory()
+    .CreateWriter<Message>()
+    .Write(new Message()
     {
         id = "123"
         content = "Hello World!"

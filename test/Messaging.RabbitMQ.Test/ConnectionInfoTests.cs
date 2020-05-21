@@ -14,7 +14,7 @@ namespace Messaging.RabbitMQ.Test
                     .WithUserName("rabbitmq")
                     .WithPassword("rabbitmq")
                     .WithPort(5672)
-                    .CreateMQFactory()
+                    .CreateChannelFactory()
             );
         }
     }

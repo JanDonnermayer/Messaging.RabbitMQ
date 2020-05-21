@@ -24,24 +24,26 @@ namespace Messaging.RabbitMQ.Test
                 .WithUserName("rabbitmq")
                 .WithPassword("rabbitmq")
                 .WithPort(5672)
-                .CreateMQFactory();
+                .CreateChannelFactory();
 
             const string QUEUE = "queue1";
 
-            var consumer = factory.GetConsumer<string>(QUEUE);
-            var publisher = factory.GetPublisher<string>(QUEUE);
-
             // Act
             const string SENT = "Hello!";
-            publisher.Next(SENT);
+            factory
+                .GetWriter<string>(QUEUE)
+                .Write(SENT);
 
             string received = string.Empty;
-            consumer
-                .GetMessages(new CancellationTokenSource().Token)
+            factory
+                .GetReader<string>(QUEUE)
+                .Read()
                 .Do(msg => received = msg)
                 .Subscribe();
 
-            await Task.Delay(1000);
+            await Task
+                .Delay(1000)
+                .ConfigureAwait(false);
 
             // Assert
             Assert.AreEqual(SENT, received);

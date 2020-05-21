@@ -12,21 +12,25 @@ using System.Reactive.Concurrency;
 
 namespace Messaging.RabbitMQ
 {
-    internal sealed class RabbitMQConsumer<TMessage> : IDisposable, IMQConsumer<TMessage>
+    internal sealed class RabbitMQConsumer<TMessage> : IDisposable, IChannelReader<TMessage>
         where TMessage : class
     {
-        private readonly Lazy<IModel> channel;
+        private readonly DisposeRoutine disposeRoutine;
 
-        private readonly string queueName;
+        private readonly Lazy<IObservable<TMessage>> channel;
 
         internal RabbitMQConsumer(IConnectionFactory connectionFactory, string queueName)
         {
-            this.queueName = queueName;
-            this.channel = new Lazy<IModel>(() =>
+            disposeRoutine = new DisposeRoutine();
+            channel = new Lazy<IObservable<TMessage>>(GetMessages);
+
+            IObservable<TMessage> GetMessages()
             {
                 var channel = connectionFactory
                     .CreateConnection()
                     .CreateModel();
+
+                disposeRoutine.Append(channel);
 
                 channel.QueueDeclare(
                     queue: queueName,
@@ -36,48 +40,47 @@ namespace Messaging.RabbitMQ
                     arguments: null
                 );
 
-                return channel;
-            });
+                var consumer = new EventingBasicConsumer(channel);
+                var queue = new BlockingCollection<BasicDeliverEventArgs>(1);
+
+                disposeRoutine.Append(queue);
+
+                static string GetString(byte[] message) =>
+                    Encoding.UTF8.GetString(message);
+
+                static TMessage Deserialize(string message) =>
+                    JsonConvert.DeserializeObject<TMessage>(message);
+
+                void Handle(object model, BasicDeliverEventArgs ea) =>
+                    queue.Add(ea);
+
+                channel.BasicConsume(
+                    queue: queueName,
+                    autoAck: true,
+                    consumer: consumer
+                );
+
+                consumer.Received += Handle;
+                disposeRoutine.Append(
+                    () => consumer.Received -= Handle
+                );
+
+                return queue
+                    .GetConsumingEnumerable(disposeRoutine.CancellationToken)
+                    .ToObservable()
+                    .ObserveOn(TaskPoolScheduler.Default)
+                    .SubscribeOn(TaskPoolScheduler.Default)
+                    .Select(ea => ea.Body)
+                    .Select(GetString)
+                    .Select(Deserialize);
+            }
         }
 
-        public IObservable<TMessage> GetMessages(CancellationToken ct)
-        {
-            var consumer = new EventingBasicConsumer(channel.Value);
-            var queue = new BlockingCollection<BasicDeliverEventArgs>(1);
+        public IObservable<TMessage> Read() =>
+            channel.Value;
 
-            static string GetString(byte[] message) =>
-                Encoding.UTF8.GetString(message);
-
-            static TMessage Deserialize(string message) =>
-                JsonConvert.DeserializeObject<TMessage>(message);
-
-            void Handle(object model, BasicDeliverEventArgs ea) =>
-                queue.Add(ea);
-
-            channel.Value.BasicConsume(
-                queue: queueName,
-                autoAck: true,
-                consumer: consumer
-            );
-
-            consumer.Received += Handle;
-            ct.Register(() => consumer.Received -= Handle);
-
-            return queue
-               .GetConsumingEnumerable(ct)
-               .ToObservable()
-               .ObserveOn(TaskPoolScheduler.Default)
-               .SubscribeOn(TaskPoolScheduler.Default)
-               .Select(ea => ea.Body)
-               .Select(GetString)
-               .Select(Deserialize);
-        }
-
-        public void Dispose()
-        {
-            if (!channel.IsValueCreated) return;
-            channel.Value.Dispose();
-        }
+        public void Dispose() =>
+            disposeRoutine.Dispose();
     }
 }
 

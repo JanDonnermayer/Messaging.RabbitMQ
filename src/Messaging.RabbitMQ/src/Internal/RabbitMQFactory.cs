@@ -4,7 +4,7 @@ using RabbitMQ.Client;
 
 namespace Messaging.RabbitMQ
 {
-    internal sealed class RabbitMQFactory : IMQFactory
+    internal sealed class RabbitMQFactory : IChannelFactory
     {
         private readonly ConnectionFactory connectionFactory;
 
@@ -46,10 +46,10 @@ namespace Messaging.RabbitMQ
             );
         }
 
-        IMQConsumer<TMessage> IMQFactory.GetConsumer<TMessage>(string queueName) =>
+        IChannelReader<TMessage> IChannelFactory.GetReader<TMessage>(string queueName) =>
             GetConsumer<TMessage>(queueName);
 
-        IMQPublisher<TMessage> IMQFactory.GetPublisher<TMessage>(string queueName) =>
+        IChannelWriter<TMessage> IChannelFactory.GetWriter<TMessage>(string queueName) =>
             GetPublisher<TMessage>(queueName);
     }
 }

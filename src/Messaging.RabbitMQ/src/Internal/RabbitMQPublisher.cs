@@ -5,7 +5,7 @@ using RabbitMQ.Client;
 
 namespace Messaging.RabbitMQ
 {
-    internal sealed class RabbitMQPublisher<TMessage> : IDisposable, IMQPublisher<TMessage>
+    internal sealed class RabbitMQPublisher<TMessage> : IDisposable, IChannelWriter<TMessage>
         where TMessage : class
     {
         private readonly Lazy<IModel> channel;
@@ -33,7 +33,7 @@ namespace Messaging.RabbitMQ
             this.queueName = queueName;
         }
 
-        public void Next(TMessage message)
+        public void Write(TMessage message)
         {
             static byte[] GetBytes(string message) =>
                 Encoding.UTF8.GetBytes(message);

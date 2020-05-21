@@ -4,7 +4,7 @@ namespace Messaging.RabbitMQ
 {
     public static class ConnectionInfoExtensions
     {
-        public static IMQFactory CreateMQFactory(this ConnectionInfo info)
+        public static IChannelFactory CreateChannelFactory(this ConnectionInfo info)
         {
             if (info is null)
                 throw new System.ArgumentNullException(nameof(info));
