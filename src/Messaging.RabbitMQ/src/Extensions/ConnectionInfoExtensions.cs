@@ -1,5 +1,3 @@
-using Messaging.RabbitMQ;
-
 namespace Messaging.RabbitMQ
 {
     public static class ConnectionInfoExtensions
