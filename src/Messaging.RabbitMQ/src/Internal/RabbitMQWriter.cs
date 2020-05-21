@@ -5,14 +5,14 @@ using RabbitMQ.Client;
 
 namespace Messaging.RabbitMQ
 {
-    internal sealed class RabbitMQPublisher<TMessage> : IDisposable, IChannelWriter<TMessage>
+    internal sealed class RabbitMQWriter<TMessage> : IDisposable, IChannelWriter<TMessage>
         where TMessage : class
     {
         private readonly Lazy<IModel> channel;
 
         private readonly string queueName;
 
-        internal RabbitMQPublisher(IConnectionFactory connectionFactory, string queueName)
+        internal RabbitMQWriter(IConnectionFactory connectionFactory, string queueName)
         {
             this.channel = new Lazy<IModel>(() =>
             {

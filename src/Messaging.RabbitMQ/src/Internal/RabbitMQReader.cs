@@ -1,25 +1,23 @@
-using System;
+﻿using System;
 using System.Text;
 using System.Linq;
-using System.Threading;
-using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Collections.Concurrent;
+using System.Reactive.Concurrency;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Reactive.Linq;
-using System.Reactive.Concurrency;
 
 namespace Messaging.RabbitMQ
 {
-    internal sealed class RabbitMQConsumer<TMessage> : IDisposable, IChannelReader<TMessage>
+    internal sealed class RabbitMQReader<TMessage> : IDisposable, IChannelReader<TMessage>
         where TMessage : class
     {
         private readonly DisposeRoutine disposeRoutine;
 
         private readonly Lazy<IObservable<TMessage>> channel;
 
-        internal RabbitMQConsumer(IConnectionFactory connectionFactory, string queueName)
+        internal RabbitMQReader(IConnectionFactory connectionFactory, string queueName)
         {
             disposeRoutine = new DisposeRoutine();
             channel = new Lazy<IObservable<TMessage>>(GetMessages);

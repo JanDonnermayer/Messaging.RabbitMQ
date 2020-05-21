@@ -4,35 +4,35 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Messaging.RabbitMQ
 {
-    internal sealed class MQBuilder : IChannelBuilder
+    internal sealed class ChannelRegistration : IChannelRegistration
     {
         private readonly IServiceCollection services;
 
-        private readonly IChannelFactory factory;
+        private readonly IChannel factory;
 
-        public MQBuilder(
+        public ChannelRegistration(
             IServiceCollection services,
-            IChannelFactory factory
+            IChannel factory
         )
         {
             this.services = services ?? throw new ArgumentNullException(nameof(services));
             this.factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
-        public IChannelBuilder AddWriter<TMessage>(string queueName)
+        public IChannelRegistration AddWriter<TMessage>(string channelName)
             where TMessage : class
         {
             services.AddSingleton(
-                factory.CreateChannelWriter<TMessage>(queueName)
+                factory.CreateWriter<TMessage>(channelName)
             );
             return this;
         }
 
-        public IChannelBuilder AddReader<TMessage>(string queueName)
+        public IChannelRegistration AddReader<TMessage>(string channelName)
             where TMessage : class
         {
             services.AddSingleton(
-                factory.CreateChannelReader<TMessage>(queueName)
+                factory.CreateReader<TMessage>(channelName)
             );
             return this;
         }

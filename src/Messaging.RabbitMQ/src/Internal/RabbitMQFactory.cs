@@ -4,7 +4,7 @@ using RabbitMQ.Client;
 
 namespace Messaging.RabbitMQ
 {
-    internal sealed class RabbitMQFactory : IChannelFactory
+    internal sealed class RabbitMQFactory : IChannel
     {
         private readonly ConnectionFactory connectionFactory;
 
@@ -22,35 +22,35 @@ namespace Messaging.RabbitMQ
             };
         }
 
-        internal RabbitMQConsumer<TMessage> GetConsumer<TMessage>(string queueName)
+        internal RabbitMQReader<TMessage> CreateReader<TMessage>(string queueName)
             where TMessage : class
         {
             if (queueName is null)
                 throw new ArgumentNullException(nameof(queueName));
 
-            return new RabbitMQConsumer<TMessage>(
+            return new RabbitMQReader<TMessage>(
                 connectionFactory: connectionFactory,
                 queueName: queueName
             );
         }
 
-        internal RabbitMQPublisher<TMessage> GetPublisher<TMessage>(string queueName)
+        internal RabbitMQWriter<TMessage> CreateWriter<TMessage>(string queueName)
             where TMessage : class
         {
             if (queueName is null)
                 throw new ArgumentNullException(nameof(queueName));
 
-            return new RabbitMQPublisher<TMessage>(
+            return new RabbitMQWriter<TMessage>(
                 connectionFactory: connectionFactory,
                 queueName: queueName
             );
         }
 
-        IChannelReader<TMessage> IChannelFactory.CreateChannelReader<TMessage>(string queueName) =>
-            GetConsumer<TMessage>(queueName);
+        IChannelReader<TMessage> IChannel.CreateReader<TMessage>(string queueName) =>
+            CreateReader<TMessage>(queueName);
 
-        IChannelWriter<TMessage> IChannelFactory.CreateChannelWriter<TMessage>(string queueName) =>
-            GetPublisher<TMessage>(queueName);
+        IChannelWriter<TMessage> IChannel.CreateWriter<TMessage>(string queueName) =>
+            CreateWriter<TMessage>(queueName);
     }
 }
 

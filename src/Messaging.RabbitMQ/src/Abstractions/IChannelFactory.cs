@@ -1,12 +1,12 @@
 ﻿
 namespace Messaging.RabbitMQ
 {
-    public interface IChannelFactory
+    public interface IChannel
     {
-        IChannelReader<TMessage> CreateChannelReader<TMessage>(string channelName)
+        IChannelReader<TMessage> CreateReader<TMessage>(string channelName)
             where TMessage : class;
 
-        IChannelWriter<TMessage> CreateChannelWriter<TMessage>(string channelName)
+        IChannelWriter<TMessage> CreateWriter<TMessage>(string channelName)
             where TMessage : class;
     }
 }

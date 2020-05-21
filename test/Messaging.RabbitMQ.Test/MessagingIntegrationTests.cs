@@ -31,12 +31,12 @@ namespace Messaging.RabbitMQ.Test
             // Act
             const string SENT = "Hello!";
             factory
-                .CreateChannelWriter<string>(QUEUE)
+                .CreateWriter<string>(QUEUE)
                 .Write(SENT);
 
             string mut_received = string.Empty;
             factory
-                .CreateChannelReader<string>(QUEUE)
+                .CreateReader<string>(QUEUE)
                 .Read()
                 .Do(msg => mut_received = msg)
                 .Subscribe();
