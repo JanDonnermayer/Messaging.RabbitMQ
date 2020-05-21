@@ -1,5 +1,5 @@
 ﻿
-namespace Genet.PDM.Workflows.RabbitMQ
+namespace Messaging.RabbitMQ
 {
     public interface IMQFactory
     {

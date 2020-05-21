@@ -2,9 +2,9 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Genet.PDM.Workflows.RabbitMQ
+namespace Messaging.RabbitMQ
 {
-    internal class MQBuilder : IMQBuilder
+    internal sealed class MQBuilder : IMQBuilder
     {
         private readonly IServiceCollection services;
 

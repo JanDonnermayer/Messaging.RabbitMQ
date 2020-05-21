@@ -3,9 +3,9 @@ using System.Text;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 
-namespace Genet.PDM.Workflows.RabbitMQ
+namespace Messaging.RabbitMQ
 {
-    public class RabbitMQPublisher<TMessage> : IDisposable, IMQPublisher<TMessage>
+    internal sealed class RabbitMQPublisher<TMessage> : IDisposable, IMQPublisher<TMessage>
         where TMessage : class
     {
         private readonly Lazy<IModel> channel;

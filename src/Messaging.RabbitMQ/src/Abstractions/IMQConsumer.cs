@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 
-namespace Genet.PDM.Workflows.RabbitMQ
+namespace Messaging.RabbitMQ
 {
     public interface IMQConsumer<TMessage> where TMessage : class
     {

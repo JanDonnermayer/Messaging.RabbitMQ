@@ -2,17 +2,19 @@ using NUnit.Framework;
 
 namespace Messaging.RabbitMQ.Test
 {
-    public class Tests
+    public class ConnectionInfoTests
     {
-        [SetUp]
-        public void Setup()
-        {
-        }
-
         [Test]
-        public void Test1()
+        public void Test_CreateFactory()
         {
-            Assert.Pass();
+            Assert.DoesNotThrow(() => ConnectionInfo
+                .Default
+                .WithHostName("localhost")
+                .WithUserName("rabbitmq")
+                .WithPassword("rabbitmq")
+                .WithPort(5672)
+                .CreateMQFactory()
+            );
         }
     }
 }

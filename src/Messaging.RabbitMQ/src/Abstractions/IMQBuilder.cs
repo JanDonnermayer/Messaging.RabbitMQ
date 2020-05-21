@@ -1,8 +1,5 @@
 
-using System;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Genet.PDM.Workflows.RabbitMQ
+namespace Messaging.RabbitMQ
 {
     internal interface IMQBuilder
     {

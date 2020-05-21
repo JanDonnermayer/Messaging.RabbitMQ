@@ -10,10 +10,9 @@ using RabbitMQ.Client.Events;
 using System.Reactive.Linq;
 using System.Reactive.Concurrency;
 
-namespace Genet.PDM.Workflows.RabbitMQ
+namespace Messaging.RabbitMQ
 {
-
-    public class RabbitMQConsumer<TMessage> : IDisposable, IMQConsumer<TMessage>
+    internal sealed class RabbitMQConsumer<TMessage> : IDisposable, IMQConsumer<TMessage>
         where TMessage : class
     {
         private readonly Lazy<IModel> channel;

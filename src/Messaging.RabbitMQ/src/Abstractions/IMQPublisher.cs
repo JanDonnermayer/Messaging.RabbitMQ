@@ -1,4 +1,4 @@
-namespace Genet.PDM.Workflows.RabbitMQ
+namespace Messaging.RabbitMQ
 {
     public interface IMQPublisher<TMessage> where TMessage : class
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Genet.PDM.Workflows.RabbitMQ
+namespace Messaging.RabbitMQ
 {
     public class ConnectionInfo
     {
@@ -19,6 +19,14 @@ namespace Genet.PDM.Workflows.RabbitMQ
         public string Password { get; }
 
         public int Port { get; }
+
+        public static ConnectionInfo Default =>
+            new ConnectionInfo(
+                hostName: "localhost",
+                userName: "rabbitmq",
+                password: "rabbitmq",
+                port: 5672
+            );
     }
 }
 

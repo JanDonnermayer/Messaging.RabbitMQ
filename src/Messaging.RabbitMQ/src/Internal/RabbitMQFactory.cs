@@ -2,10 +2,9 @@
 using System;
 using RabbitMQ.Client;
 
-namespace Genet.PDM.Workflows.RabbitMQ
+namespace Messaging.RabbitMQ
 {
-
-    public class RabbitMQFactory : IMQFactory
+    internal sealed class RabbitMQFactory : IMQFactory
     {
         private readonly ConnectionFactory connectionFactory;
 
