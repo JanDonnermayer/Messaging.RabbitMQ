@@ -31,14 +31,14 @@ namespace Messaging.RabbitMQ.Test
             // Act
             const string SENT = "Hello!";
             factory
-                .GetWriter<string>(QUEUE)
+                .CreateChannelWriter<string>(QUEUE)
                 .Write(SENT);
 
-            string received = string.Empty;
+            string mut_received = string.Empty;
             factory
-                .GetReader<string>(QUEUE)
+                .CreateChannelReader<string>(QUEUE)
                 .Read()
-                .Do(msg => received = msg)
+                .Do(msg => mut_received = msg)
                 .Subscribe();
 
             await Task
@@ -46,7 +46,7 @@ namespace Messaging.RabbitMQ.Test
                 .ConfigureAwait(false);
 
             // Assert
-            Assert.AreEqual(SENT, received);
+            Assert.AreEqual(SENT, mut_received);
         }
     }
 }

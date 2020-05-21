@@ -23,7 +23,7 @@ namespace Messaging.RabbitMQ
             where TMessage : class
         {
             services.AddSingleton(
-                factory.GetWriter<TMessage>(queueName)
+                factory.CreateChannelWriter<TMessage>(queueName)
             );
             return this;
         }
@@ -32,7 +32,7 @@ namespace Messaging.RabbitMQ
             where TMessage : class
         {
             services.AddSingleton(
-                factory.GetReader<TMessage>(queueName)
+                factory.CreateChannelReader<TMessage>(queueName)
             );
             return this;
         }

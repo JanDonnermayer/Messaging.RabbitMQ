@@ -18,7 +18,7 @@ ConnectionInfo.Default
     .WithUserName("<yourUser>")
     .WithPassword("<yourPassword>")
     .CreateChannelFactory()
-    .CreateWriter<Message>()
+    .CreateChannelWriter<Message>()
     .Write(new Message()
     {
         id = "123"

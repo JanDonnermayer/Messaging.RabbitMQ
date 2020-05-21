@@ -46,10 +46,10 @@ namespace Messaging.RabbitMQ
             );
         }
 
-        IChannelReader<TMessage> IChannelFactory.GetReader<TMessage>(string queueName) =>
+        IChannelReader<TMessage> IChannelFactory.CreateChannelReader<TMessage>(string queueName) =>
             GetConsumer<TMessage>(queueName);
 
-        IChannelWriter<TMessage> IChannelFactory.GetWriter<TMessage>(string queueName) =>
+        IChannelWriter<TMessage> IChannelFactory.CreateChannelWriter<TMessage>(string queueName) =>
             GetPublisher<TMessage>(queueName);
     }
 }
