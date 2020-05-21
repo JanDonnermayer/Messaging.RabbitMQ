@@ -43,7 +43,7 @@ namespace Messaging.RabbitMQ
         public IObservable<TMessage> GetMessages(CancellationToken ct)
         {
             var consumer = new EventingBasicConsumer(channel.Value);
-            var queue = new BlockingCollection<byte[]>(1);
+            var queue = new BlockingCollection<BasicDeliverEventArgs>(1);
 
             static string GetString(byte[] message) =>
                 Encoding.UTF8.GetString(message);
@@ -52,7 +52,7 @@ namespace Messaging.RabbitMQ
                 JsonConvert.DeserializeObject<TMessage>(message);
 
             void Handle(object model, BasicDeliverEventArgs ea) =>
-                queue.Add(ea.Body);
+                queue.Add(ea);
 
             channel.Value.BasicConsume(
                 queue: queueName,
@@ -67,6 +67,8 @@ namespace Messaging.RabbitMQ
                .GetConsumingEnumerable(ct)
                .ToObservable()
                .ObserveOn(TaskPoolScheduler.Default)
+               .SubscribeOn(TaskPoolScheduler.Default)
+               .Select(ea => ea.Body)
                .Select(GetString)
                .Select(Deserialize);
         }
